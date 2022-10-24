@@ -1,0 +1,353 @@
+<?php 
+include ('include/header.php'); 
+?>
+<main class="page-content">
+	<div class="board_marker">
+		<h6>Home <i class="fa fa-circle text-warning"></i>Bank Info</h6>	
+	</div>
+	<div class="containter-fluid">
+		<div class="row">
+			<h6 style="color:#059605; font-weight:bold;">Bank Info</h6>
+
+			<div class="col-md-6">
+			
+				<div class="card-wrapper" style="margin-top:10px; padding-lef:15px; padding-right:30px; padding-bottom:20px;">
+					<br />
+					<div class="" style= "margin:0px auto; background:#eee; border:
+						3px solid #ff8800; border-radius:5px; margin-top:20px; padding:20px; padding-top:0; ">
+						<?php 
+							error_reporting(0);
+							if(isset($_POST['submitsalary'])){
+								$department_id		=$_POST['department']; 
+								$employee_name		=$_POST['emname']; 
+								$grade_id			=$_POST['grade']; 
+								$basic_salary		=$_POST['basic_salary']; 
+								$personal_pay		=$_POST['personal_pay']; 
+								$fixed_pay			=$_POST['fixed_pay']; 
+								$service_charge		=$_POST['service_charge']; 
+								$dearness_allownce	=$_POST['dearness_allownce']; 
+								$overtime			=$_POST['overtime']; 
+								$oneday_food_deduct	=$_POST['oneday_food_deduct']; 
+								$provident_found	=$_POST['provident_found']; 
+								$food_deduct		=$_POST['food_deduct']; 
+								$status				=$_POST['status']; 
+					
+								$chk="SELECT * FROM `salary_details_info` WHERE `employee_id` LIKE '$employee_name%'";
+								$check=$db->select($chk);
+								
+								if(($check !== false && $check->num_rows)>0){
+									echo "<script type='text/javascript'>alert('Already Done!')</script>";
+								}else{
+								$query="INSERT INTO `salary_details_info`(`department_id`, `employee_id`, `grade_id`, `basic_salary`,
+								`personal_pay`, `fixed_pay`, `service_charge`, `dearnss_allowance`, `over_time`, 
+								`deduct_one_day`, `pf_contribution`, `food_from_sc`, `status`)  values 
+								('$department_id','$employee_name','$grade_id','$basic_salary',
+								'$personal_pay','$fixed_pay','$service_charge','$dearness_allownce','$overtime',
+								'$oneday_food_deduct','$provident_found','$food_deduct','$status')";
+								$results=$db->insert($query);
+								if($results==true){
+									?> 
+									<div class="alert alert-success alert-dismissible">
+										<button type="button" class="close" data-dismiss="alert">&times;</button>
+									  <strong>Salary Infomation Successfully Submit</strong>  
+									</div>
+									<?php 
+								}else{
+									?> 
+									<div class="alert alert-danger">
+									  <strong>Somthing Problem</strong>  
+									</div>
+									<?php 
+								}
+							}
+						}
+						?>
+						<form action="" method="post" >
+						<div class="row">
+							 
+							<h5 style="padding:20px;" class="bg-warning">Salary Details:</h5>	
+
+							<div class="col-sm-12 form-group">
+								<label for="sex">Select Department</label>
+								<select id="department" name='department' onchange="getemploye(this.value)" class="form-control browser-default custom-select">
+								<option value="">Select</option>
+								<?php 
+									$query="select * from department"; 
+									$results=$db->select($query);
+									$id=0; 
+									if ($results==true){
+											while($res=$results->fetch_assoc()){
+											$id++; 
+									?> 
+									<option value="<?php echo $res['id']; ?>"><?php echo $res['name']; ?></option>
+									<?php }} ?>									
+								</select>
+							</div>
+							
+							
+							
+							<div class="col-sm-12 form-group">
+								<label for="sex">Select Employee</label>
+								<select id="emname" name="emname" class="form-control browser-default custom-select">
+									<option >Select</option>								
+								</select>
+							</div>	
+							<div class="col-sm-12 form-group">
+								<label for="sex">Select Grade</label>
+								<select id="grade" name="grade" class="form-control browser-default custom-select">
+									<option >Select</option>
+									<?php 
+									$query4="select * from salary_grade"; 
+									$results4=$db->select($query4);
+									$id=0; 
+									if ($results4==true){
+											while($res4=$results4->fetch_assoc()){
+											$id++; 
+									?> 
+									<option value="<?php echo $res4['em_id']; ?>"><?php echo $res4['grade_name']; ?></option>
+									<?php }} ?>		
+									
+								</select>
+							</div>						
+							<div class="col-sm-6 form-group">
+								<label for="tel">Basic</label>
+								<input type="tel" name="basic_salary" class="form-control" id="tel" placeholder="Enter Basic Salary here." required>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label for="tel">Personal Pay</label>
+								<input type="tel" name="personal_pay" class="form-control" id="tel" placeholder="Enter Personal Pay here" required>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label for="tel">Fixed Pay</label>
+								<input type="tel" name="fixed_pay" class="form-control" id="tel" placeholder="Enter Personal Pay here" required>
+							</div>
+							<div class="col-sm-6 form-group">
+								<label for="tel">Service Charge</label>
+								<input type="tel" name="service_charge" class="form-control" id="tel" placeholder="Enter Personal Pay here" required>
+							</div>	
+							<div class="col-sm-6 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="dearness_allownce" value="1" >
+								  <label class="form-check-label">Dearness Allownce</label>
+								</div>			
+							</div>
+							<div class="col-sm-6 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="overtime" value="1" >
+								  <label class="form-check-label">Over Time</label>
+								</div>			
+							</div>
+							<h6>Deducation:</h6>
+							
+							<div class="col-sm-3 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="oneday_food_deduct" value="1" >
+								  <label class="form-check-label">One Day</label>
+								</div>			
+							</div>	
+							<div class="col-sm-3 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="provident_found" value="1" >
+								  <label class="form-check-label">PF Contribution</label>
+								</div>			
+							</div>	
+							<div class="col-sm-3 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="food_deduct" value="1" >
+								  <label class="form-check-label">Food From SC</label>
+								</div>			
+							</div>
+							<div class="col-sm-3 form-group">
+								<div class="form-check">
+								  <input class="form-check-input" type="checkbox" id="check1" name="status" value="1" Checked>
+								  <label class="form-check-label">Active</label>
+								</div>			
+							</div>				
+							
+						</div>
+							<div class="col-sm-12 form-group mb-0">
+							   <button type="submit" name="submitsalary"class="btn btn-warning" >Submit</button>
+							 </div>
+							</div>
+					 </form>
+						
+					</div> 
+			</div>
+			<div class="col-md-5">
+				<div class="card-wrapper" style="margin-top:10px; padding-lef:15px; padding-right:30px; padding-bottom:20px;">
+							<?php 
+							error_reporting(0);
+							if(isset($_POST['grade'])){
+								$add_zero		=0; 
+								$grade_name		=$_POST['grade_name'];
+								
+								$house_rent1	=$_POST['house_rent']; 
+								$house_rent		=$add_zero.'.'.$house_rent1; 
+								
+								$d_a1			=$_POST['d_a'];  
+								$d_a			=$add_zero.'.'.$d_a1; 
+								
+								$conveyence		=$_POST['conveyence'];  
+								$medical		=$_POST['medical']; 
+								
+								$pf1			=$_POST['pf'];  
+								$pf				=$add_zero.'.'.$pf1; 
+								
+								if($grade_name==true){
+								$query1="INSERT INTO `salary_grade`(`grade_name`, `house_rent`, `dearness_allownce`, 
+								`conveyence`, `medical`, `provident_found`)  values 
+								('$grade_name','$house_rent','$d_a','$conveyence','$medical','$pf')";
+
+								$results1=$db->insert($query1);
+									
+								if($results1==true){
+									?> 
+									<div class="alert alert-success alert-dismissible">
+										<button type="button" class="close" data-dismiss="alert">&times;</button>
+									  <strong>Grade Added Successfully</strong>  
+									</div>
+									<?php 
+								}else{
+									?> 
+									<div class="alert alert-danger">
+									  <strong>Somthing Problem</strong>  
+									</div>
+									<?php 
+								}
+							  }
+							}
+						?> 
+						<form action="" method="post" > 
+						<br />
+							<div class="" style="max-width:650px; margin:0px auto; background:#eee; border:
+							3px solid #ff8800; border-radius:5px; margin-top:20px; padding:20px; padding-top:0; ">
+								<div class="row">
+								<h5 style="padding:20px;" class="bg-warning">Create Salary Grade</h5>					
+								<div class="col-sm-5 form-group">
+									<label for="name-f">Grade Name:</label>
+									<input type="text" class="form-control" name="grade_name" id="name-f" placeholder="Enter Grade Name" required>
+								</div>	
+								
+								<div class="col-sm-3 form-group">
+									<label for="name-f">House Rent</label>
+									<input type="text" class="form-control" name="house_rent" id="name-f" placeholder="40" required>
+								</div>
+								<div class="col-sm-4 form-group">
+									<label for="name-f">Dearness Allownce</label>
+									<input type="text" class="form-control" name="d_a" id="name-f" placeholder="25" required>
+								</div>
+								<div class="col-sm-3 form-group">
+									<label for="name-f">Conveyence</label>
+									<input type="text" class="form-control" name="conveyence" id="name-f" placeholder="250" required>
+								</div>
+								<div class="col-sm-3 form-group">
+									<label for="name-f">Medical</label>
+									<input type="text" class="form-control" name="medical" id="name-f" placeholder="150" required>
+								</div>
+								<div class="col-sm-3 form-group">
+									<label for="name-f">Provident Found</label>
+									<input type="text" class="form-control" name="pf" id="name-f" placeholder="10" required>
+								</div>
+								
+								<div class="col-sm-12 form-group">
+									 <div class="btn-group">
+									  <button type="submit" name="grade" class="btn btn-success">Save</button>							  
+									</div>
+								</div>
+								
+								</div>
+							</div>
+						</form>
+						
+						<br />
+						
+						<table id="example" class="table table-bordered table-striped" style="width:100%; padding:20px;  ">
+							<thead>
+								<tr class="bg-success text-white">												 																						
+									<th>#ID</th>
+									<th>Grade</th>
+									<th>House Rent</th> 
+									<th>D/A</th> 
+									<th>Conveyence</th> 
+									<th>Medical</th> 
+									<th>PF</th> 
+								</tr>
+							</thead>
+							<tbody>
+							<?php 
+								$query3="select * from salary_grade"; 
+								$resultsift=$db->select($query3);
+								$id=0; 
+								if ($resultsift==true){
+										while($shift=$resultsift->fetch_assoc()){
+											$id++;
+
+									$hr			= $shift['house_rent'];
+									$float      = $hr;
+									$parts      = explode('.', (string)$float);
+									$hrn		= trim($parts[1], '0');
+								
+									$dr			= $shift['dearness_allownce'];
+									$float      = $dr;
+									$parts      = explode('.', (string)$float);
+									$drr		= trim($parts[1], '0');
+								
+									$pf			= $shift['provident_found'];
+									$float      = $pf;
+									$parts      = explode('.', (string)$float);
+									$pfr		= trim($parts[1], '0');
+								
+								
+
+
+
+
+
+											
+							?>
+								<tr>
+									<td><?php echo $id; ?> </td>
+									<td><?php echo $shift['grade_name']; ?></td>
+									<td><?php echo $hrn; ?>% </td>
+									<td><?php echo $drr; ?>%</td>
+									<td><?php echo $shift['conveyence']; ?>Tk</td>
+									<td><?php echo $shift['medical']; ?> Tk</td>
+									<td><?php echo $pfr; ?>%</td>
+								</tr> 
+							  
+								<?php }} else{ ?> 
+								
+									<tr>
+									<td colspan="7" class="text-center" style="font-weight:bold;"><?php echo "Shift Not Created Yet"; ?> </td>  
+								</tr> 
+									
+								<?php } ?> 
+							</tbody>
+						</table>
+				</div>
+		</div>
+		
+	</div>
+</div>
+</main>
+  <!-- page-content" -->
+
+
+<script type="text/javascript">
+		function getemploye(str) { 
+		  var xhttp = new XMLHttpRequest();
+		  xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+			 document.getElementById("emname").innerHTML = this.responseText;
+			}
+		  };
+		  xhttp.open("GET", "get_employee.php?emid="+str, true);
+		  xhttp.open("GET", "get_employee.php?emid="+str, true);
+		  xhttp.send();
+		} 
+</script>
+<!-- page-wrapper -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/esm/popper.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.js'></script>
+<script  src="js/script.js"></script>

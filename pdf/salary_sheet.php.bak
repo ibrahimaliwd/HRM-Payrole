@@ -1,0 +1,185 @@
+<?php
+ob_start();
+require('fpdf/fpdf.php');
+include("../lib/config.php");
+include("../lib/database.php");
+include("../lib/helper.php");
+$db = new Database();
+$fm = new Formate();
+
+
+	if (isset($_POST['bank_letter'])){
+		$servic_month	= $_POST['month'];
+	
+	} else{
+		echo"No Data Found";
+	}
+	
+	
+class PDF extends FPDF {  
+	function Footer() {   
+		$this->SetY(-15); // Arial italic 8
+		$this->SetFont('Arial','I',7);	// Page number
+		$this->Cell(130,2,'---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------',0,1,'L'); 
+		$this->Cell(70,5,'Software Developed By: Ibrahim Ali, +8801916859326',0,0,'L'); 
+		$this->Cell(50,5,'Printing Date: '.date("Y-m-d h:i:sa") ,0,0,'R');
+		$this->Cell(70,5,'Page '.$this->PageNo().'/{nb}',0,0,'R'); 
+	}
+}		
+//A4 width : 219mm
+//default margin : 10mm each side
+//writable horizontal : 219-(10*2)=189mm
+$pdf = new FPDF('P','in',[8.5,13]);
+$pdf = new pdf();
+$pdf->AliasNbPages();
+$pdf->AddPage('L', 'Legal', 0);
+//set font to arial, bold, 14pt
+
+//set font to arial, regular, 12pt
+
+
+
+
+
+$pdf->SetFont('Arial','B',20);
+$pdf->SetTextColor(176,4,4);
+$pdf->Cell(180	,10,'Narayanganj Club Ltd.',0,1,'C'); //end of line
+
+$pdf->SetFont('Arial','',12);
+$pdf->SetTextColor(0,0,0);
+$pdf->Cell(180	,6,'95, Bangbandhu Road, Narayanganj',0,1,'C'); //end of line  
+$pdf->Cell(45	,6,'',0,0,'L'); //end of line  
+
+$pdf->Cell(180	,10,'',0,1,'C'); 
+
+//Get Month & Year 
+$pdf->SetFont('Arial','B',18);
+$pdf->SetTextColor(0,0,0);
+$fuldate=date("d-F-Y"); 
+$month 	= date("F",strtotime($servic_month));
+$Year 	= date("Y",strtotime($servic_month)); 
+$pdf->Cell( 347, 5, 'Salary Sheet'.'-'.$month.'-'.$Year,0,1,'C');
+ $pdf->Cell(347	,3,'',0,1); 
+
+
+//header Table 
+$pdf->SetFont('Arial','B',9);
+$pdf->SetFillColor(255,193,71);
+$pdf->SetTextColor(0,0,0);
+$pdf->Cell(13	,10,'S.L',1,0,'C',true); 
+$pdf->Cell(45	,10,'Name',1,0,'C',true); 
+$pdf->Cell(30	,10,'Department',1,0,'C',true); 
+$pdf->Cell(30	,10,'Designation',1,0,'C',true); 
+$pdf->Cell(20	,10,'Basic',1,0,'C',true); 
+$pdf->Cell(20	,10,'H.Rent',1,0,'C',true); 
+$pdf->Cell(20	,10,'D/A',1,0,'C',true); 
+$pdf->Cell(12	,10,'Medi.',1,0,'C',true); 
+$pdf->Cell(12	,10,'Conv.',1,0,'C',true); 
+$pdf->Cell(12	,10,'P.Pay',1,0,'C',true); 
+$pdf->Cell(20	,10,'F.Pay',1,0,'C',true); 
+$pdf->Cell(15	,10,'P.Pay',1,0,'C',true); 
+$pdf->Cell(12	,10,'Gross',1,0,'C',true); 
+$pdf->Cell(15	,10,'P.F',1,0,'C',true); 
+$pdf->Cell(15	,10,'C.C',1,0,'C',true); 
+$pdf->Cell(15	,10,'L.W.P',1,0,'C',true); 
+$pdf->Cell(20	,10,'Net Pay',1,1,'C',true); 
+
+$query2 ="SELECT * FROM `service_charge` WHERE `sevice_charge_month` LIKE '$servic_month%'";
+$results2=$db->select($query2);
+$id=0;
+ 
+if ($results2==true){	
+	while($res2=$results2->fetch_assoc()){
+	$id++; 
+		$pdf->SetFont('Arial','B',8);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->Cell(13	,7,$id,1,0,'C');
+		
+		//Get Employe Name from Employee Table
+		$em_id=$res2['employee_id']; 
+		$query3="select * from employee where em_id='".$em_id."'"; 
+		$results3=$db->select($query3);											
+		if ($results3==true){
+				while($res3=$results3->fetch_assoc()){					
+					$pdf->Cell(45	,7,$res3['name'],1,0,'L');
+				}
+		}else{
+				$pdf->Cell(45	,7,'Not Match',1,0,'L');
+			}
+				
+		
+		//Get Deapertment Name from Department Table 
+			$dpid= $res2['department_id'];  	
+			$query4="select * from department where id='".$dpid."'"; 
+			$dp=$db->select($query4);												
+			if ($dp==true){
+				while($dpname=$dp->fetch_assoc()){	
+				$pdf->Cell(30	,7,$dpname['name'],1,0,'C');
+			}
+		}else{
+				$pdf->Cell(30	,7,'Not Match',1,0,'C');
+			}
+		
+		$em_id2=$res2['employee_id']; 
+		$query5="select * from employee_bank_info where employee_id='".$em_id2."'"; 
+		$results5=$db->select($query5);											
+		if ($results5==true){
+				while($res5=$results5->fetch_assoc()){	
+					$pdf->Cell(30	,7,$res5['account_no'],1,0,'L');
+				}
+		}else{
+				$pdf->Cell(30	,7,'Not Match',1,0,'L');
+			}
+		
+		
+		
+		
+		
+		
+		$pdf->Cell(20	,7,number_format((float)$res2['service_charge'], 2, '.', ','),1,1,'C'); 
+	  }
+	}
+
+
+$pdf->SetFont('Arial','B',8);
+$pdf->SetFillColor(255,193,71);
+$pdf->SetTextColor(0, 0, 0);
+$pdf->Cell(307	,8,'Total Amount=',1,0,'R', True); 
+//Get Total Amount 
+
+$query6="SELECT SUM(service_charge) AS TotalAmount from `service_charge` where sevice_charge_month='".$servic_month."'"; 
+$results6=$db->select($query6);											
+if ($results6==true){
+		while($res6=$results6->fetch_assoc()){	
+			$pdf->Cell(20	,8,number_format((float)$res6['TotalAmount'], 2, '.', ','),1,1,'R',True); 
+		}
+}else{
+		$pdf->Cell(30	,8,'Problem',1,1,'R'); 
+	}
+
+$pdf->Cell(153	,8,'',0,1,'L'); 
+
+$pdf->SetFont('Arial','B',10);
+$pdf->SetTextColor(0, 0, 0);
+$pdf->Cell(153	,8,'Yours Truely,',0,1,'L'); 
+
+
+
+$pdf->Cell(153	,8,'',0,1,'L'); 
+$pdf->Cell(153	,8,'',0,1,'L'); 
+$pdf->Cell(153	,8,'',0,1,'L'); 
+$pdf->SetFont('Arial','B',10);
+$pdf->SetTextColor(0, 0, 0);
+$pdf->Cell(100	,4,'---------------------------',0,0,'L'); 
+$pdf->Cell(100	,4,'---------------------------',0,1,'C'); 
+$pdf->Cell(100	,4,'Md. Abdul Mannan',0,0,'L'); 
+$pdf->Cell(100	,4,'Gopinath Das',0,1,'C'); 
+$pdf->Cell(100	,4,'Acting Secretary',0,0,'L'); 
+$pdf->Cell(100	,4,'Chief Accountant',0,1,'C'); 
+
+
+$filename="service_charge";
+ob_end_flush();
+$pdf->Output($filename,'I');  
+?>			 			  
+			

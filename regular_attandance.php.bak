@@ -1,0 +1,67 @@
+<?php 
+include ('include/header.php'); 
+?>
+<main class="page-content">
+	<div class="board_marker">
+		<h6>Home <i class="fa fa-circle text-warning"></i> Employee Daily Attance Report</h6>	
+	</div>
+	<div class="containter-fluid">
+		<div class="row">
+			<h6 style="color:#059605; font-weight:bold;">Employee Daily Attance Report</h6>
+			<div class="col-md-12">
+				<div class="card-wrapper" style="margin-top:10px; padding-lef:15px; padding-right:30px; padding-bottom:20px;">
+					<table class="table">
+					
+						
+						<table id="example" class="table table-bordered table-striped nowrap" style="width:100%; padding:20px;  ">
+											<thead>
+												<tr class="bg-warning text-white">
+													<td>S.L </td>
+													<td>Employee Name </td>
+													<td>Department </td>
+													<td>Clock In </td>
+													<td>Clock Out </td>
+													<td>Early </td>
+													<td>Late </td>
+													<td>Over Time </td>
+												</tr>
+											</thead>
+											<tbody>
+										
+											<tr>
+												<td>01</td>
+												<td>Ibrahim Ali</td>
+												<td>Administration</td>
+												<td>10.45 am</td>
+												<td>8.45 pm</td>
+												<td>1.5 Hours</td>
+												<td>0.00 Min</td>
+												<td>1.5 Hours</td>
+											</tr>
+											  
+											</tbody>
+										</table>
+						
+					</table>
+				</div>
+			</div>
+		</div> 
+	</div>
+</main>
+  <!-- page-content" -->
+</div>
+<!-- page-wrapper -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/esm/popper.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.js'></script>
+<script  src="js/script.js"></script>
+
+
+<!-- Data Table  -->
+<script src='https://code.jquery.com/jquery-3.5.1.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js'></script>
+<script src='https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js'></script>
+<!--End Data Table  -->

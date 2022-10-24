@@ -1,0 +1,61 @@
+<?php 
+function lwp($db,$FixedPay,$personalPay,$em_id){
+		$lwpq="select * from lwp_entry where employee_id='".$em_id."'"; 
+		$lwpr=$db->select($lwpq);
+		$id=0; 
+		if ($lwpr==true){
+				while($lwpres=$lwpr->fetch_assoc()){
+					$id++; 
+																
+					$deduct_amount 	=$lwpres['lwp_amount']; 
+					
+					//Get salar grade id from salary Details table 
+					$sldtailsq	="select * from salary_details_info where employee_id='".$em_id."'"; // grade id table 
+					$sldilsqr	=$db->select($sldtailsq);
+							
+					if ($sldilsqr==true){
+							while($grade_info_from_salary_table=$sldilsqr->fetch_assoc()){
+							$grade_id		= $grade_info_from_salary_table['grade_id'];// Grade_id from salary_details_info table 
+				  
+							$gradeq="select * from salary_grade where id='".$grade_id."'"; // grade id table 
+							$graderes=$db->select($gradeq);
+								
+							if ($graderes==true){
+								while($grade_info=$graderes->fetch_assoc()){
+								 //salary grade table data
+								 $hr		= $grade_info['house_rent'];
+								 $d_a		= $grade_info['dearness_allownce'];
+								 $cn		= $grade_info['conveyence'];
+								 $medical	= $grade_info['medical'];
+								 
+								 //end salary grade table data 
+								 
+								 
+								 //calculation
+								 $houserent		=$hr* $deduct_amount; 
+								 $dearallowance	=$d_a* $deduct_amount;  
+								 $totalsalary	=$deduct_amount+$personalPay+$FixedPay+$houserent+$dearallowance+$medical;
+								 return $totalsalary; 
+								 
+								}
+							}
+						}
+				
+					}
+				}	
+			}
+	}
+
+
+
+function pf($db,$pf,$basic){
+	if ($pf==1){
+		$pfcontribute =$basic*0.10; 
+		return $pfcontribute; 
+	}else{
+		return "P.F. Not Active"; 
+	} 
+}
+
+$pfr=pf($db,$pf,$basic); 
+$total=lwp($db,$FixedPay,$personalPay,$em_id); 
